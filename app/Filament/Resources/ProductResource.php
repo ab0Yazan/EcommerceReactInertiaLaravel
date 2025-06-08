@@ -14,6 +14,8 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -28,6 +30,8 @@ class ProductResource extends Resource
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static SubNavigationPosition $subNavigationPosition = subNavigationPosition::End;
 
     public static function form(Form $form): Form
     {
@@ -89,6 +93,11 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('images')
+                    ->collection('images')
+                    ->limit(1)
+                    ->label(__('Image'))
+                    ->conversion('thumb'),
                 TextColumn::make('title')
                 ->searchable()
                 ->words(10)
@@ -129,6 +138,7 @@ class ProductResource extends Resource
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'images' => Pages\ProductImages::route('/{record}/images'),
         ];
     }
 
@@ -137,5 +147,13 @@ class ProductResource extends Resource
         /** @var User $user */
         $user = Filament::auth()->user();
         return $user && $user->hasRole(RolesEnum::Vendor);
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+           Pages\EditProduct::class,
+            Pages\ProductImages::class,
+        ]);
     }
 }
