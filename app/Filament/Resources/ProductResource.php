@@ -33,6 +33,11 @@ class ProductResource extends Resource
 
     protected static SubNavigationPosition $subNavigationPosition = subNavigationPosition::End;
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->forVendor();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -140,6 +145,7 @@ class ProductResource extends Resource
             'edit' => Pages\EditProduct::route('/{record}/edit'),
             'images' => Pages\ProductImages::route('/{record}/images'),
             'variation-types' => Pages\ProductVariationTypes::route('/{record}/variation-types'),
+            'product-variations' => Pages\ProductVariations::route('/{record}/product-variations'),
         ];
     }
 
@@ -156,6 +162,7 @@ class ProductResource extends Resource
            Pages\EditProduct::class,
             Pages\ProductImages::class,
             Pages\ProductVariationTypes::class,
+            Pages\ProductVariations::class,
         ]);
     }
 }
